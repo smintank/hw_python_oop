@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -10,17 +10,17 @@ class InfoMessage:
     distance: float
     speed: float
     calories: float
-    message: str = ('Тип тренировки: {}; '
-                    'Длительность: {:.3f} ч.; '
-                    'Дистанция: {:.3f} км; '
-                    'Ср. скорость: {:.3f} км/ч; '
-                    'Потрачено ккал: {:.3f}.')
+
+    _message: str = ('Тип тренировки: {training_type}; '
+                     'Длительность: {duration:.3f} ч.; '
+                     'Дистанция: {distance:.3f} км; '
+                     'Ср. скорость: {speed:.3f} км/ч; '
+                     'Потрачено ккал: {calories:.3f}.')
 
     def get_message(self) -> str:
         """Get info message about training."""
 
-        return self.message.format(self.training_type, self.duration,
-                                   self.distance, self.speed, self.calories)
+        return self._message.format(**asdict(self))
 
 
 class Training:
@@ -142,7 +142,7 @@ class Swimming(Training):
 def read_package(workout_type: str, data: list) -> Training:
     """Read data received from sensors."""
 
-    training_types: list[str: Training] = {
+    training_types: dict[str: Training] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking
